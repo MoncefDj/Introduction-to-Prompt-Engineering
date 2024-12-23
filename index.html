@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Introduction to Prompt Engineering</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: linear-gradient(135deg, #f9f9f9, #e8e8e8);
+        color: #333;
+      }
+
+      .slide-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      .slide {
+        display: none;
+        padding: 40px;
+        text-align: center;
+        min-height: 400px;
+        animation: fadeIn 0.5s ease-in-out;
+      }
+
+      .slide.active {
+        display: block;
+      }
+
+      .title-slide {
+        text-align: center;
+        background: linear-gradient(135deg, #a8d8ea, #fce1e4);
+        color: #444;
+        padding: 60px 40px;
+      }
+
+      .title-slide h1 {
+        font-size: 2.5em;
+        margin-bottom: 20px;
+        color: #333;
+      }
+
+      .title-slide p {
+        font-size: 1.2em;
+        opacity: 0.9;
+        color: #555;
+      }
+
+      h1 {
+        color: #5a8ef0;
+        font-size: 2.5em;
+        margin-bottom: 30px;
+      }
+
+      h2 {
+        color: #5a8ef0;
+        font-size: 2em;
+      }
+
+      .content {
+        font-size: 1.2em;
+        line-height: 1.6;
+        color: #555;
+        margin-bottom: 30px;
+        text-align: left;
+      }
+
+      .navigation {
+        text-align: center;
+        padding: 20px;
+        background: #f9f9f9;
+      }
+
+      button {
+        background: #5a8ef0;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 0 10px;
+        font-size: 1em;
+        transition: background 0.3s ease;
+      }
+
+      button:hover {
+        background: #4077d6;
+      }
+
+      .progress {
+        height: 5px;
+        background: #e0e0e0;
+        width: 100%;
+        position: relative;
+      }
+
+      .progress-bar {
+        height: 100%;
+        background: #5a8ef0;
+        width: 0%;
+        transition: width 0.3s ease;
+      }
+
+      .highlight {
+        color: #5a8ef0;
+        font-weight: bold;
+      }
+
+      .example {
+        background: #f3f4f6;
+        padding: 15px;
+        border-left: 4px solid #5a8ef0;
+        margin: 10px 0;
+        text-align: left;
+      }
+
+      .code-block {
+        background: #f3f4f6;
+        padding: 15px;
+        border-radius: 5px;
+        font-family: monospace;
+        margin: 10px 0;
+        white-space: pre-wrap;
+        text-align: left;
+      }
+
+      .quiz-container {
+        text-align: left;
+        margin: 20px 0;
+      }
+
+      .quiz-question {
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      .quiz-option {
+        background: #f3f4f6;
+        border: 2px solid #dce7f3;
+        border-radius: 8px;
+        padding: 15px;
+        margin: 10px 0;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .quiz-option:hover {
+        background: #dce7f3;
+      }
+
+      .quiz-option.selected {
+        background: #5a8ef0;
+        color: white;
+      }
+
+      .quiz-option.correct {
+        background: #76c893;
+        color: white;
+      }
+
+      .quiz-option.incorrect {
+        background: #e76f51;
+        color: white;
+      }
+
+      .feedback {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 8px;
+        display: none;
+        background: #f9f9f9;
+      }
+
+      .next-button {
+        display: none;
+        margin-top: 20px;
+        background: #5a8ef0;
+        color: white;
+      }
+
+      .presenter-info {
+        margin-top: 30px;
+        padding: 20px;
+        background: linear-gradient(
+          135deg,
+          #5a8ef0,
+          #89c2d9
+        ); /* Gradient for modern look */
+        color: #ffffff; /* Contrasting white text */
+        border-radius: 12px; /* Rounded corners */
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+      }
+
+      .presenter-header h3 {
+        margin: 0;
+        font-size: 1.4rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #fef9ef; /* Softer shade of white for the heading */
+      }
+
+      .presenter-details {
+        margin-top: 15px;
+      }
+
+      .presenter-name {
+        font-size: 1.6rem;
+        font-weight: bold;
+        margin: 0 0 5px;
+        color: #ffffff; /* Bright white for emphasis */
+      }
+
+      .presenter-details p {
+        margin: 5px 0;
+        font-size: 1.3rem;
+        color: #eaf6fa; /* Subtle color difference for balance */
+      }
+
+      .presenter-details strong {
+        color: #ffde59; /* Gold accent for highlighting titles */
+        font-weight: 600;
+      }
+
+      .image-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto;
+        max-width: 80%;
+        height: auto;
+        overflow: hidden; 
+        border-radius: 12px; 
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+
+      .image-container img {
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+        border-radius: 12px;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="slide-container">
+      <div class="progress">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+
+      <!-- Title Slide -->
+      <div class="slide title-slide active">
+        <h1>Introduction to Prompt Engineering</h1>
+        <p>A Comprehensive Guide to Effective AI Communication</p>
+        <div class="presenter-info">
+          <div class="presenter-header">
+            <h3>Presented by</h3>
+          </div>
+          <div class="presenter-details">
+            <p class="presenter-name"><strong>Djezzar Moncef</strong></p>
+            <p>2nd-Year AI Master's Degree Student</p>
+            <p>President of <strong>AI Nexus Club</strong></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Meme Slide (Icebreaker) - Title Removed -->
+      <div class="slide">
+        <div class="image-container">
+          <img src="INTRO MEME.jpeg" alt="Prompt Engineering Meme" />
+        </div>
+      </div>
+
+      <!-- What is Prompt Engineering Slide -->
+      <div class="slide">
+        <h2>What is Prompt Engineering?</h2>
+        <div class="content">
+          Prompt engineering is the process of designing and optimizing prompts
+          for AI models like ChatGPT. Think of it as crafting the perfect
+          question to get the best possible answer.<br /><br />
+          <div class="example">
+            Just as a well-designed fishing lure catches specific fish, a
+            well-crafted prompt generates specific, desired responses from AI.
+          </div>
+        </div>
+      </div>
+
+      <!-- Why is it Important? Slide -->
+      <div class="slide">
+        <h2>Why is it Important?</h2>
+        <div class="content">
+          • Improves accuracy and relevance of AI responses <br />
+          • Saves time by getting desired results faster <br />
+          • Reduces misunderstandings between user and AI <br />
+          • Enables more complex and nuanced interactions <br />
+          • Maximizes the AI's potential capabilities
+        </div>
+      </div>
+
+      <!-- Meme Slide (AI Overload) - Title Removed -->
+      <!-- <div class="slide">
+        <div class="image-container">
+          <img src="5000 knowledge meme.jpg" alt="Prompt Engineering Meme" />
+        </div>
+      </div> -->
+
+      <!-- Quiz: Understanding Prompt Engineering Basics -->
+      <div class="slide">
+        <h2>Quiz: Understanding Prompt Engineering Basics</h2>
+        <div class="quiz-container">
+          <div class="quiz-question">
+            Which best describes the primary purpose of prompt engineering?
+          </div>
+          <div class="quiz-options">
+            <div class="quiz-option" data-correct="true">
+              Optimizing inputs to AI models to get desired outputs
+            </div>
+            <div class="quiz-option">Writing computer programs</div>
+            <div class="quiz-option">Creating marketing content</div>
+            <div class="quiz-option">Managing databases</div>
+          </div>
+          <div class="feedback"></div>
+        </div>
+      </div>
+
+      <!-- Core Principle 1: Be Specific -->
+      <div class="slide">
+        <h2>Core Principle 1: Be Specific</h2>
+        <div class="content">
+          The more specific your prompt, the better the output.<br /><br />
+          <div class="example">
+            <strong>Instead of:</strong> "Write about dogs"<br />
+            <strong>Better:</strong> "Write a 300-word guide about caring for 
+            Golden Retriever puppies in their first month, including feeding, 
+            exercise, and vaccination schedules."
+          </div>
+        </div>
+      </div>
+
+      <!-- Core Principle 2: Work in Steps -->
+      <div class="slide">
+        <h2>Core Principle 2: Work in Steps</h2>
+        <div class="content">
+          Break complex tasks into smaller, manageable chunks.<br /><br />
+          <div class="example">
+            <strong>Instead of:</strong> "Create a business plan"<br />
+            <strong>Better:</strong> Let's break it down:<br />
+            1. First, outline the executive summary<br />
+            2. Then, analyze the market<br />
+            3. Next, detail the product/service<br />
+            And so on...
+          </div>
+        </div>
+      </div>
+
+      <!-- Core Principle 3: Iterate and Improve -->
+      <div class="slide">
+        <h2>Core Principle 3: Iterate and Improve</h2>
+        <div class="content">
+          Use the AI's output to refine your prompts:<br /><br />
+          1. Start with a basic prompt<br />
+          2. Analyze the response<br />
+          3. Identify gaps or areas for improvement<br />
+          4. Modify the prompt<br />
+          5. Repeat until satisfied
+        </div>
+      </div>
+
+      <!-- Quiz: Core Principles -->
+      <div class="slide">
+        <h2>Quiz: Core Principles</h2>
+        <div class="quiz-container">
+          <div class="quiz-question">
+            Which is the most important principle of prompt engineering?
+          </div>
+          <div class="quiz-options">
+            <div class="quiz-option" data-correct="true">
+              Being specific and detailed
+            </div>
+            <div class="quiz-option">Using complex language</div>
+            <div class="quiz-option">Making prompts as short as possible</div>
+            <div class="quiz-option">Using technical terms</div>
+          </div>
+          <div class="feedback"></div>
+        </div>
+      </div>
+
+      <!-- Elements of Good Prompts -->
+      <div class="slide">
+        <h2>Elements of Good Prompts</h2>
+        <div class="content">
+          <span class="highlight">Clear Language:</span> Use precise,
+          unambiguous terms <br />
+          <span class="highlight">AI Persona:</span> Define the role you want
+          the AI to assume <br />
+          <span class="highlight">Context:</span> Provide relevant background
+          information <br />
+          <span class="highlight">Constraints:</span> Set clear boundaries and
+          requirements <br />
+          <span class="highlight">Output Format:</span> Specify how you want the
+          response structured
+        </div>
+      </div>
+
+      <!-- Quiz: Elements of Effective Prompts -->
+      <div class="slide">
+        <h2>Quiz: Elements of Effective Prompts</h2>
+        <div class="quiz-container">
+          <div class="quiz-question">
+            Which element is most crucial for complex AI tasks?
+          </div>
+          <div class="quiz-options">
+            <div class="quiz-option">Using technical jargon</div>
+            <div class="quiz-option" data-correct="true">
+              Providing clear context and constraints
+            </div>
+            <div class="quiz-option">Making the prompt as long as possible</div>
+            <div class="quiz-option">Using informal language</div>
+          </div>
+          <div class="feedback"></div>
+        </div>
+      </div>
+
+      <!-- Meme Slide (Too Much to Handle) - Title Removed -->
+      <!-- <div class="slide">
+        <div class="image-container">
+          <img src="comm prompt meme.png" alt="Prompt Engineering Meme" />
+        </div>
+      </div> -->
+
+      <!-- Prompting Approaches: Zero-Shot, One-Shot, Few-Shot -->
+      <div class="slide">
+        <h2>Prompting Approaches: Zero-Shot, One-Shot, Few-Shot</h2>
+        <div class="content">
+          <span class="highlight">Zero-Shot:</span> Direct question with no
+          examples<br />
+          <span class="highlight">One-Shot:</span> Include one example with the
+          prompt<br />
+          <span class="highlight">Few-Shot:</span> Provide multiple examples<br /><br />
+          <div class="example">
+            <strong>Few-Shot Example:</strong><br />
+            "Write a product description like these examples:<br />
+            1. [Example 1]<br />
+            2. [Example 2]<br />
+            Now write one for [your product]."
+          </div>
+        </div>
+      </div>
+
+      <!-- Quiz: Shot Prompting Types -->
+      <div class="slide">
+        <h2>Quiz: Understanding Prompting Approaches</h2>
+        <div class="quiz-container">
+          <div class="quiz-question">Which best describes Few-Shot prompting?</div>
+          <div class="quiz-options">
+            <div class="quiz-option">
+              Asking the same question multiple times
+            </div>
+            <div class="quiz-option" data-correct="true">
+              Providing multiple examples in the prompt
+            </div>
+            <div class="quiz-option">Using very short prompts</div>
+            <div class="quiz-option">Running the AI model multiple times</div>
+          </div>
+          <div class="feedback"></div>
+        </div>
+      </div>
+
+      <!-- Chain of Thought Prompting -->
+      <div class="slide">
+        <h2>Chain of Thought Prompting</h2>
+        <div class="content">
+          Guide the AI to show its reasoning process step by step:<br /><br />
+          <div class="example">
+            "Let's solve this problem step by step:<br />
+            1. First, let's understand what we're looking for<br />
+            2. Then, identify the key information<br />
+            3. Next, apply the relevant concepts<br />
+            4. Finally, arrive at the solution."
+          </div>
+        </div>
+      </div>
+
+      <!-- Perspective Prompting -->
+      <div class="slide">
+        <h2>Perspective Prompting</h2>
+        <div class="content">
+          Request the AI to respond from different viewpoints:<br /><br />
+          <div class="example">
+            "Analyze [topic] from the perspective of:<br />
+            • A business executive<br />
+            • An environmental scientist<br />
+            • A social activist<br />
+            • A technology expert"
+          </div>
+        </div>
+      </div>
+
+      <!-- Quiz: Advanced Prompting Techniques -->
+      <div class="slide">
+        <h2>Quiz: Advanced Prompting Techniques</h2>
+        <div class="quiz-container">
+          <div class="quiz-question">
+            Which is the main benefit of chain-of-thought prompting?
+          </div>
+          <div class="quiz-options">
+            <div class="quiz-option">It makes prompts shorter</div>
+            <div class="quiz-option">It uses less computational power</div>
+            <div class="quiz-option" data-correct="true">
+              It helps AI show its reasoning process step by step
+            </div>
+            <div class="quiz-option">It makes responses more concise</div>
+          </div>
+          <div class="feedback"></div>
+        </div>
+      </div>
+
+      <!-- Meme Slide (When Prompts Become Overwhelming) - Title Removed -->
+      <!-- <div class="slide">
+        <div class="image-container">
+          <img src="no anymore memes.avif" alt="Prompt Engineering Meme" />
+        </div>
+      </div> -->
+
+      <!-- Role-Based Prompting -->
+      <div class="slide">
+        <h2>Role-Based Prompting</h2>
+        <div class="example">
+          <h3>Example Roles:</h3>
+          <div class="code-block">
+1. Act as a financial advisor:
+   "Help me create a retirement savings plan for a 30-year-old earning $60,000/year."
+
+2. Act as a fitness trainer:
+   "Design a workout routine for a beginner focusing on weight loss."
+
+3. Act as a travel agent:
+   "Plan a 7-day itinerary for Paris with a $3000 budget."
+          </div>
+        </div>
+      </div>
+
+      <!-- Format-Specific Prompts -->
+      <div class="slide">
+        <h2>Format-Specific Prompts</h2>
+        <div class="content">
+          <div class="example">
+            <h3>Table Format:</h3>
+            <div class="code-block">
+Create a comparison table of iPhone models from 2020-2024, including:
+- Model name
+- Screen size
+- Battery life
+- Price
+
+Format as a Markdown table.
+            </div>
+          </div>
+          <div class="example">
+            <h3>List Format:</h3>
+            <div class="code-block">
+Generate a checklist for moving to a new house. Categorize items by:
+1. Pre-move tasks
+2. Packing essentials
+3. Moving day tasks
+4. Post-move tasks
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quiz: Advanced Prompt Applications -->
+      <div class="slide">
+        <h2>Quiz: Advanced Prompt Applications</h2>
+        <div class="quiz-container">
+          <div class="quiz-question">
+            Which of the following is the best example of role-based prompting?
+          </div>
+          <div class="quiz-options">
+            <div class="quiz-option">"Write something about science"</div>
+            <div class="quiz-option" data-correct="true">
+              "As an experienced physicist, explain quantum entanglement to a
+              high school student"
+            </div>
+            <div class="quiz-option">"What is quantum physics?"</div>
+            <div class="quiz-option">"Give me information about physics"</div>
+          </div>
+          <div class="feedback"></div>
+        </div>
+      </div>
+
+      <!-- Practice Exercises -->
+      <div class="slide">
+        <h2>Practice Exercises</h2>
+        <div class="content">
+          <div class="example">
+            <h3>Exercise 1: Content Creation</h3>
+            <div class="code-block">
+Write a LinkedIn post about [topic]:
+- Hook in first line
+- 3 main points
+- Call to action
+- Length: 200 words
+- Include 3 relevant hashtags
+            </div>
+          </div>
+          <div class="example">
+            <h3>Exercise 2: Problem Solving</h3>
+            <div class="code-block">
+Help me debug this code: [paste code]
+Explain:
+1. What's wrong
+2. Why it's happening
+3. How to fix it
+4. How to prevent it
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Practical Tips -->
+      <div class="slide">
+        <h2>Practical Tips</h2>
+        <div class="content">
+          • Start with clear objectives <br />
+          • Use specific examples when possible <br />
+          • Include relevant constraints <br />
+          • Request specific output formats <br />
+          • Test and refine your prompts <br />
+          • Keep a library of effective prompts <br />
+          • Learn from unsuccessful attempts
+        </div>
+      </div>
+
+      <!-- Common Mistakes to Avoid -->
+      <div class="slide">
+        <h2>Common Mistakes to Avoid</h2>
+        <div class="content">
+          • Being too vague <br />
+          • Overcomplicating prompts <br />
+          • Forgetting to specify format <br />
+          • Ignoring context <br />
+          • Not iterating on responses <br />
+          • Assuming AI understands implied information
+        </div>
+      </div>
+
+      <!-- Quiz: Best Practices -->
+      <div class="slide">
+        <h2>Quiz: Best Practices</h2>
+        <div class="quiz-container">
+          <div class="quiz-question">
+            Which approach is the most effective to improve your prompts?
+          </div>
+          <div class="quiz-options">
+            <div class="quiz-option">Making them longer</div>
+            <div class="quiz-option">Using complex vocabulary</div>
+            <div class="quiz-option" data-correct="true">
+              Iterating and refining based on responses
+            </div>
+            <div class="quiz-option">Copying others' prompts exactly</div>
+          </div>
+          <div class="feedback"></div>
+        </div>
+      </div>
+
+      <!-- Conclusion Slide -->
+      <div class="slide">
+        <h2>Conclusion & Next Steps</h2>
+        <div class="content">
+          <p>
+            Congratulations on completing this introduction to Prompt
+            Engineering! You’ve learned why prompt crafting matters, key
+            principles for building effective prompts, and advanced techniques
+            to optimize AI responses.
+          </p>
+          <p>
+            <strong>Next Steps:</strong>
+            <ul>
+              <li>Experiment with role-based and format-specific prompts.</li>
+              <li>Build a personal “prompt library” of your best examples.</li>
+              <li>Stay curious and keep iterating to improve AI interactions.</li>
+            </ul>
+          </p>
+          <p>Thank you for your attention—happy prompting!</p>
+        </div>
+      </div>
+
+      <!-- Meme Slide (Wrap-Up & Thank You) - Title Removed -->
+      <div class="slide">
+        <div class="image-container">
+          <img src="thank you.png" alt="Prompt Engineering Meme" />
+        </div>
+      </div>
+
+      <div class="navigation">
+        <button onclick="prevSlide()">Previous</button>
+        <button onclick="nextSlide()">Next</button>
+      </div>
+    </div>
+
+    <script>
+      let currentSlide = 0;
+      const slides = document.querySelectorAll(".slide");
+      const totalSlides = slides.length;
+
+      function nextSlide() {
+        currentSlide = (currentSlide + 1) % totalSlides;
+        updateSlide();
+      }
+
+      function prevSlide() {
+        currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+        updateSlide();
+      }
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight") nextSlide();
+        if (e.key === "ArrowLeft") prevSlide();
+      });
+
+      // Add quiz functionality for multiple quizzes
+      function initializeQuizzes() {
+        const quizContainers = document.querySelectorAll(".quiz-container");
+
+        quizContainers.forEach((container) => {
+          const options = container.querySelectorAll(".quiz-option");
+          const feedback = container.querySelector(".feedback");
+          const nextButton = container.querySelector(".next-button");
+          let answered = false; // Track if the question has been answered
+
+          options.forEach((option) => {
+            option.addEventListener("click", () => {
+              if (answered) return; // Prevent multiple answers
+
+              answered = true;
+              const isCorrect = option.getAttribute("data-correct") === "true";
+
+              // Style the selected option
+              option.classList.add(isCorrect ? "correct" : "incorrect");
+
+              // Provide feedback
+              feedback.style.display = "block";
+              feedback.textContent = isCorrect
+                ? "Correct! Great job."
+                : "Incorrect. Try reviewing the material.";
+
+              // Style the remaining options
+              options.forEach((otherOption) => {
+                if (otherOption !== option) {
+                  otherOption.classList.add(
+                    otherOption.getAttribute("data-correct") === "true"
+                      ? "correct"
+                      : "incorrect"
+                  );
+                }
+              });
+
+              // Show the next button if it exists
+              if (nextButton) {
+                nextButton.style.display = "inline-block";
+                nextButton.addEventListener("click", () => {
+                  // Move to the next slide
+                  nextSlide();
+                });
+              }
+            });
+          });
+        });
+      }
+
+      function updateSlide() {
+        slides.forEach((slide) => slide.classList.remove("active"));
+        slides[currentSlide].classList.add("active");
+
+        const progressBar = document.getElementById("progressBar");
+        const progress = ((currentSlide + 1) / totalSlides) * 100;
+        progressBar.style.width = progress + "%";
+
+        // Initialize quiz if the current slide contains one
+        if (slides[currentSlide].querySelector(".quiz-container")) {
+          initializeQuizzes();
+        }
+      }
+
+      // Initialize quizzes when the page loads
+      document.addEventListener("DOMContentLoaded", () => {
+        updateSlide();
+        initializeQuizzes();
+      });
+    </script>
+  </body>
+</html>
